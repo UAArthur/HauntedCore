@@ -1,0 +1,7 @@
+command.list.desc=Lists all registered NPCs.
+command.list.empty=No NPCs found.
+
+command.add.desc=Adds a new NPC.
+command.add.arg.name=Name of the NPC to add.
+command.add.error.no_target=Not looking at a valid target to create an NPC from.
+command.add.success = NPC '{name}' has been successfully added.

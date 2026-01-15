@@ -1,0 +1,14 @@
+{
+  "author": "uaarthur",
+  "Group": "uaarthur",
+  "Name": "HauntedDialogue",
+  "Version": "1.0.0",
+  "Main": "net.hntdstudio.core.Main",
+  "ServerVersion": ">=0.0.1",
+  "Dependencies": {},
+  "OptionalDependencies": {
+    "Hytale:I18nModule": "*",
+    "Hytale:EntityModule": "*"
+  },
+  "IncludesAssetPack": true
+}

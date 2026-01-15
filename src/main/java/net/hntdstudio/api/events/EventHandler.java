@@ -1,4 +1,4 @@
-package net.hntdstudio.hytale.api.events;
+package net.hntdstudio.api.events;
 
 import java.lang.annotation.*;
 
