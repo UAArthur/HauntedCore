@@ -1,0 +1,38 @@
+$C = "../Common.ui";
+
+Button #Button {
+  Padding: (Full: 0);
+}
+
+$C.@Container {
+  Anchor: (Width: 1200, Height: 250, Bottom: 25);
+
+  #Title {
+    Group {
+      LayoutMode: Left;
+      $C.@Title {
+        @Text = "[{key}]";
+        Anchor: (Left: 0, Top: 0);
+      }
+    }
+  }
+
+  #Content {
+    Group {
+      Anchor: (Left: 0, Top: 50, Right: 0, Bottom: 0);
+      LayoutMode: Full;
+
+      Label #DialogueText {
+        Anchor: (Full: 0);
+        Padding: (Horizontal: 10, Vertical: 10);
+        Style: (
+          FontSize: 14,
+          TextColor: #ffffff,
+          HorizontalAlignment: Start,
+          VerticalAlignment: Start,
+        );
+        Text: "{dialogue}";
+      }
+    }
+  }
+}

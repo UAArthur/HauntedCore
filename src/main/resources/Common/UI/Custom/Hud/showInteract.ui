@@ -1,0 +1,18 @@
+$C = "../Common.ui";
+
+Group {
+  Anchor: (Width: 250, Height: 65, Right: 650);
+  Background: (TexturePath: "../Common/Popup.png", Border: 16);
+  Label #DialogueText {
+    Anchor: (Full: 0);
+    Padding: (Horizontal: 10, Vertical: 10);
+    Style: (
+      FontSize: 14,
+      RenderBold: true,
+      TextColor: #ffffff,
+      HorizontalAlignment: Center,
+      VerticalAlignment: Center,
+    );
+    Text: "Press F to talk with Dummy";
+  }
+}

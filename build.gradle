@@ -1,18 +1,36 @@
 plugins {
     id 'java'
+    id 'org.jetbrains.gradle.plugin.idea-ext' version '1.3'
 }
 
 group = 'net.hntdstudio'
 version = '1.0-SNAPSHOT'
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
 repositories {
     mavenCentral()
+    maven {
+        url "https://cursemaven.com"
+        content {
+            includeGroup "curse.maven"
+        }
+    }
 }
 
 dependencies {
     compileOnly files('libs/HytaleServer.jar')
-    compileOnly("org.projectlombok:lombok:1.18.42")
+    compileOnly files('libs/SakuraLib-0.1.0.jar')
+
+    compileOnly ("org.jetbrains:annotations:26.0.2-1")
+    compileOnly ("org.projectlombok:lombok:1.18.42")
     annotationProcessor 'org.projectlombok:lombok:1.18.42'
+
+    implementation("com.google.code.gson:gson:2.13.2")
+
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -29,3 +47,16 @@ build.finalizedBy(copyToPlugins)
 test {
     useJUnitPlatform()
 }
+
+def serverRunDir = file("../Server")
+if (!serverRunDir.exists()) {
+    serverRunDir.mkdir()
+}
+
+//idea.project.settings.runConfigurations {
+//    'HytaleServer'(org.jetbrains.gradle.ext.JarApplication) {
+//        jarPath = file("../Server/HytaleServer.jar").absolutePath
+//        programParameters = "--allow-op --assets=../Assets.zip --mods=${sourceSets.main.java.srcDirs.first().parentFile.absolutePath}"
+//        workingDirectory = serverRunDir.absolutePath
+//    }
+//}

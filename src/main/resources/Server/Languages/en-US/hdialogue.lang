@@ -1,0 +1,10 @@
+command.add.desc=Add a dialogue file to an NPC
+command.add.arg.npcname.desc=The name of the NPC
+command.add.arg.dialoguefile.desc=The name of the dialogue file
+command.add.npc.notfound=NPC with name '{name}' not found!
+command.add.file.notfound=Dialogue file '{file}' not found!
+command.add.success=Successfully assigned dialogue '{dialogueFile}' to NPC '{npcName}'
+
+command.add.arg.dialogueid.desc=The ID of the dialogue to add
+
+command.interactionHints.talk=Press [{key}] to talk with {name}.
