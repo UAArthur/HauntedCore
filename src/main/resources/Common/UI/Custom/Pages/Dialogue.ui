@@ -10,8 +10,8 @@ $C.@Container {
   #Title {
     Group {
       LayoutMode: Left;
-      $C.@Title {
-        @Text = "[{key}]";
+      $C.@Title #TitleText {
+        @Text = "{npcName}";
         Anchor: (Left: 0, Top: 0);
       }
     }
