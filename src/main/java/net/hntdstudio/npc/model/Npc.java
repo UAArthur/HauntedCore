@@ -4,7 +4,6 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -22,7 +21,7 @@ public class Npc {
         this.name = name;
     }
 
-    public Ref<EntityStore> getRef(@NonNull Store<EntityStore> store) {
+    public Ref<EntityStore> getRef(Store<EntityStore> store) {
         if (cachedRef == null || !cachedRef.isValid()) {
             cachedRef = store.getExternalData().getRefFromUUID(UUID.fromString(uuid));
         }

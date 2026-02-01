@@ -1,8 +1,9 @@
-package net.hntdstudio.core.ui.pages;
+package net.hntdstudio.dialogue.ui.pages;
 
 import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.protocol.packets.interface_.CustomPageLifetime;
+import com.hypixel.hytale.protocol.packets.interface_.CustomUICommand;
 import com.hypixel.hytale.protocol.packets.interface_.CustomUIEventBindingType;
 import com.hypixel.hytale.protocol.packets.interface_.Page;
 import com.hypixel.hytale.server.core.entity.entities.Player;
@@ -23,10 +24,10 @@ import javax.annotation.Nonnull;
 public class DialoguePage extends CustomUIPage {
     private final Main main;
     private final DialogueData dialogueData;
+
     private int currentDialogueIndex = 1;
     private int currentMessageIndex = 0;
     private String[] messages;
-
     public DialoguePage(@NonNull Main main, @NonNull PlayerRef playerRef, @NonNull DialogueData dialogueData) {
         super(playerRef, CustomPageLifetime.CanDismissOrCloseThroughInteraction);
         this.main = main;
@@ -41,6 +42,7 @@ public class DialoguePage extends CustomUIPage {
         main.hideUIForPlayer(playerRef, ref, store);
         commandBuilder.append("Pages/Dialogue.ui");
 
+
         uiEventBuilder.addEventBinding(
                 CustomUIEventBindingType.Activating,
                 "#Button",
@@ -51,6 +53,7 @@ public class DialoguePage extends CustomUIPage {
                 .filter(dialogue -> dialogue.getId() == currentDialogueIndex)
                 .findFirst()
                 .ifPresent(dialogue -> {
+                    commandBuilder.set("#Title #TitleText.Text", dialogue.getDialogueFrom());
                     this.messages = dialogue.getDialogueText().split("\\|\\|");
                     commandBuilder.set("#Content #DialogueText.Text", messages[currentMessageIndex]);
                 });

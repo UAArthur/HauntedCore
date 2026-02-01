@@ -8,6 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class DialogueData {
+    private String npcId;
     private String dialogueId;
     private List<Dialogue> dialogues;
 

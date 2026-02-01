@@ -17,6 +17,7 @@ import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
 import lombok.NonNull;
+import net.hntdstudio.dialogue.DialogueManager;
 import net.hntdstudio.npc.NpcManager;
 import net.hntdstudio.npc.model.Npc;
 
@@ -75,33 +76,7 @@ public class HDialogueCommand extends AbstractCommandCollection {
                 return;
             }
 
-            world.execute(() -> {
-                try {
-                    store.ensureComponent(npcRef, Interactable.getComponentType());
-
-                    Interactions interactionsComponent = (Interactions) store.getComponent(
-                            npcRef,
-                            Interactions.getComponentType()
-                    );
-
-                    if (interactionsComponent == null) {
-                        interactionsComponent = new Interactions();
-                        store.addComponent(
-                                npcRef,
-                                Interactions.getComponentType(),
-                                interactionsComponent
-                        );
-                    }
-                    interactionsComponent.setInteractionId(InteractionType.Use, "*" + dialogueId);
-//                    interactionsComponent.setInteractionHint(Message.translation("hdialogue.command.interactionHints.talk")
-//                            .param("name", npcName)
-//                            .getAnsiMessage());
-                    interactionsComponent.setInteractionHint("");
-                    commandContext.sendMessage(Message.raw("Interaction hint added to NPC: " + npcName));
-                } catch (Exception e) {
-                    HytaleLogger.forEnclosingClass().atSevere().log("Error while trying to set the Interaction for %s \n %s ", npcName, e.getMessage());
-                }
-            });
+            DialogueManager.get().assignInteractionToEntity(world, store, npcRef, npc, dialogueId);
         }
     }
 }
