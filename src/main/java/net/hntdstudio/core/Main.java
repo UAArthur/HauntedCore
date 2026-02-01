@@ -4,11 +4,13 @@ import com.hypixel.hytale.component.Ref;
 import com.hypixel.hytale.component.Store;
 import com.hypixel.hytale.logger.HytaleLogger;
 import com.hypixel.hytale.math.vector.Vector3d;
-import com.hypixel.hytale.protocol.packets.interface_.CustomHud;
+import com.hypixel.hytale.protocol.packets.machinima.UpdateMachinimaScene;
 import com.hypixel.hytale.server.core.HytaleServer;
 import com.hypixel.hytale.server.core.command.system.CommandManager;
 import com.hypixel.hytale.server.core.entity.entities.Player;
 import com.hypixel.hytale.server.core.entity.entities.player.hud.CustomUIHud;
+import com.hypixel.hytale.server.core.io.adapter.PacketAdapters;
+import com.hypixel.hytale.server.core.io.adapter.PacketWatcher;
 import com.hypixel.hytale.server.core.modules.entity.component.TransformComponent;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.selector.Selector;
 import com.hypixel.hytale.server.core.plugin.JavaPlugin;
@@ -22,16 +24,14 @@ import lombok.Getter;
 import lombok.NonNull;
 import net.hntdstudio.core.commands.HDialogueCommand;
 import net.hntdstudio.core.commands.HNpcCommand;
+import net.hntdstudio.core.commands.TestCommand;
+import net.hntdstudio.core.packets.EntityLookAtPlayerAdapter;
 import net.hntdstudio.core.ui.hud.InteractHud;
 import net.hntdstudio.dialogue.DialogueManager;
 import net.hntdstudio.npc.NpcManager;
 import org.jetbrains.annotations.NotNull;
-import org.sakurasoft.sakuralib.event.ListenerRegistry;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -41,10 +41,11 @@ import static com.hypixel.hytale.server.core.util.TargetUtil.getTargetEntity;
 public class Main extends JavaPlugin {
     @Getter
     private final HytaleLogger hntdLogger = HytaleLogger.forEnclosingClass();
-    @Getter
-    private String basePath = "mods/hntdcore";
     private ScheduledFuture<?> checkTask;
     //Managers
+    @Getter
+    private ConfigManager configManager;
+    private DatabaseManager databaseManager;
     private NpcManager npcManager;
     private DialogueManager dialogueManager;
     //listener
@@ -57,8 +58,10 @@ public class Main extends JavaPlugin {
     protected void setup() {
         super.setup();
         //initialize managers
-        this.npcManager = new NpcManager(this);
+        this.configManager = new ConfigManager(this);
+        this.databaseManager = new DatabaseManager(this);
         this.dialogueManager = new DialogueManager(this);
+        this.npcManager = new NpcManager(this);
     }
 
     @Override
@@ -66,13 +69,16 @@ public class Main extends JavaPlugin {
         super.start();
 
         //register listeners
-//        ListenerRegistry.registerEvents(worldStartListener, this);
 
         //register commands
         CommandManager.get().register(new HNpcCommand("HauntedNpc", "Register your NPCs for dialogues"));
         CommandManager.get().register(new HDialogueCommand("HDialogue", "Manage dialogues for NPCs"));
+        CommandManager.get().register(new TestCommand("TPlayAnimation", "test"));
 
         this.startCheckingEntitiesInRange(Universe.get().getWorlds());
+        EntityLookAtPlayerAdapter entityLookAtPlayerAdapter = new EntityLookAtPlayerAdapter();
+//        entityLookAtPlayerAdapter.register();
+
     }
 
 
@@ -131,20 +137,38 @@ public class Main extends JavaPlugin {
         Selector.selectNearbyEntities(
                 store,
                 playerPos,
-                3.0,
+                5.0,
                 nearbyNpcs::add,
-                (entityRef) -> !entityRef.equals(playerEntityRef) &&
-                        npcManager.getNpcs().stream()
-                                .anyMatch(npc -> npc.getRef(store).equals(entityRef) &&
-                                        player.getPageManager().getCustomPage() == null)
+                (entityRef) -> {
+                    if (entityRef.equals(playerEntityRef)) return false;
+
+                    return npcManager.getNpcs().stream()
+                            .anyMatch(npc -> {
+                                Ref<EntityStore> ref = npc.getRef(store);
+                                return ref != null && ref.equals(entityRef) &&
+                                        player.getPageManager().getCustomPage() == null;
+                            });
+                }
         );
+
+        for (Ref<EntityStore> npcRef : nearbyNpcs) {
+            npcManager.getNpcs().stream()
+                    .filter(npc -> {
+                        Ref<EntityStore> ref = npc.getRef(store);
+                        return ref != null && ref.equals(npcRef);
+                    })
+                    .findFirst()
+                    .ifPresent(npc -> {
+                        dialogueManager.ensureDialogueAssigned(npc, store, world);
+                    });
+        }
 
         if (nearbyNpcs.isEmpty()) {
             hideUIForPlayer(playerRef, playerEntityRef, store);
             return;
         }
 
-        Ref<EntityStore> targetEntity = getTargetEntity(playerEntityRef, 3.0f, store);
+        Ref<EntityStore> targetEntity = getTargetEntity(playerEntityRef, 5.0f, store);
         String playerId = playerRef.getUuid().toString();
         Ref<EntityStore> previousTarget = playerTargetedNpc.get(playerId);
 

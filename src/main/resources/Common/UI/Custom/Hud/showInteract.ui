@@ -1,7 +1,7 @@
 $C = "../Common.ui";
 
 Group {
-  Anchor: (Width: 250, Height: 65, Right: 650);
+  Anchor: (Width: 250, Height: 65, Right: 450);
   Background: (TexturePath: "../Common/Popup.png", Border: 16);
   Label #DialogueText {
     Anchor: (Full: 0);
