@@ -10,6 +10,7 @@ import com.hypixel.hytale.server.core.modules.entity.component.Interactable;
 import com.hypixel.hytale.server.core.modules.interaction.Interactions;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.Interaction;
 import com.hypixel.hytale.server.core.modules.interaction.interaction.config.RootInteraction;
+import com.hypixel.hytale.server.core.universe.PlayerRef;
 import com.hypixel.hytale.server.core.universe.Universe;
 import com.hypixel.hytale.server.core.universe.world.World;
 import com.hypixel.hytale.server.core.universe.world.storage.EntityStore;
@@ -90,7 +91,7 @@ public class DialogueManager {
         });
     }
 
-    public void ensureDialogueAssigned(@NonNull Npc npc, @NonNull Store<EntityStore> store, @NonNull World world) {
+    public void ensureDialogueAssigned(@NonNull PlayerRef playerRef, @NonNull Npc npc, @NonNull Store<EntityStore> store, @NonNull World world) {
         Ref<EntityStore> npcRef = npc.getRef(store);
         if (npcRef == null || !npcRef.isValid()) {
             System.out.println("NPC ref is null or invalid for: " + npc.getName());
@@ -115,7 +116,14 @@ public class DialogueManager {
             return;
         }
 
+        if (!dialogue.getSymbol().isEmpty())
+            System.out.println("Adding Symbol");
         System.out.println("Assigning dialogue '" + dialogue.getDialogueId() + "' to NPC '" + npc.getName() + "'");
+
+        this.main.getSymbolManager().getSymbol("exclamation").ifPresent(symbol -> {
+            symbol.spawn(world, playerRef, npcRef, store, this.main.getSymbolManager().getNextNetworkId());
+        });
+
         assignInteractionToEntity(world, store, npcRef, npc, dialogue.getDialogueId());
     }
 

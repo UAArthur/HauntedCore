@@ -46,6 +46,8 @@ public class Main extends JavaPlugin {
     @Getter
     private ConfigManager configManager;
     private DatabaseManager databaseManager;
+    @Getter
+    private SymbolManager symbolManager;
     private NpcManager npcManager;
     private DialogueManager dialogueManager;
     //listener
@@ -60,6 +62,7 @@ public class Main extends JavaPlugin {
         //initialize managers
         this.configManager = new ConfigManager(this);
         this.databaseManager = new DatabaseManager(this);
+        this.symbolManager = new SymbolManager(this);
         this.dialogueManager = new DialogueManager(this);
         this.npcManager = new NpcManager(this);
     }
@@ -159,7 +162,7 @@ public class Main extends JavaPlugin {
                     })
                     .findFirst()
                     .ifPresent(npc -> {
-                        dialogueManager.ensureDialogueAssigned(npc, store, world);
+                        dialogueManager.ensureDialogueAssigned(playerRef, npc, store, world);
                     });
         }
 
